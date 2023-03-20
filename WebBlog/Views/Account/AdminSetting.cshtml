@@ -1,0 +1,154 @@
+﻿@model WebBlog.Models.AdminUserViewModel
+
+<!-- List all blogs -->
+<h2>Blogs</h2>
+<hr />
+<table>
+    <tr>
+        <th>Title/ </th>
+        <th>Content/ </th>
+        <th>Username</th>
+        <th></th>
+    </tr>
+    @foreach (var blog in Model.Blogs)
+    {
+        <tr>
+            <td>@blog.Title</td>
+            <td title="@blog.Content">
+                @if (blog.Content.Length > 50)
+                    {
+                    @Html.Raw(blog.Content.Substring(0, 50).Replace("<br>", ""))
+                    }
+                    else
+                    {
+                        @blog.Content.Replace("<br>", "")
+                    }
+            </td>
+            <td>@blog.Username</td>
+            <td>
+                <button type="button" class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#Details"
+                    data-blogid="@blog.BlogId">
+                    Details
+                </button>
+            </td>
+        </tr>
+
+    }
+</table>
+
+<!-- Modal -->
+<div class="modal fade modal-dialog-scrollable" id="Details" tabindex="-1" aria-labelledby="DetailsLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="DetailsLabel">Blog Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+            <p id="content"></p>
+            <button id="deleteBtn" class="btn btn-danger">Delete</button>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    
+    </div>
+  </div>
+</div>
+
+<!-- List all users -->
+<br />
+<br />
+<h2>Users</h2>
+<hr />
+<table>
+    <tr>
+        <th>Username</th>
+        <th></th>
+    </tr>
+    @foreach (var user in Model.Users)
+    {
+        <tr>
+            <td>@user.Username</td>
+            <td><a tabindex="0" 
+                class="btn btn-lg btn-warning" 
+                role="button" 
+                data-userId="@user.UserId">Delete</a></td>
+        </tr>
+    }
+</table>
+
+<style>
+    table td {
+        border: solid black;
+        padding: 10px;
+    }
+    .content {
+        white-space: pre-wrap;
+    }
+
+
+    body {
+        background-color: #f1f1f1;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Click, Ajax to get Blog content display in Modal Bootstrap
+    $(document).on("click", ".btn-primary", function () {
+        var blogId = $(this).data("blogid");
+
+        $.ajax({
+            url: "/Account/GetBlogContent/" + blogId,
+            type: "GET",
+            success: function (result) {
+                // Show the blog post content in the modal body
+                $("#content").html(result.content);
+
+                // Show the modal
+                $("#Details").modal("show");
+
+                // Handle the click event of the delete button
+                $("#deleteBtn").click(function () {
+                    $.ajax({
+                        url: "/Account/DeleteBlog/" + blogId,
+                        type: "DELETE",
+                        success: function (result) {
+                            // Refresh the page after deleting the blog post
+                            location.reload();
+                        },
+                        error: function () {
+                            // Handle errors here
+                        }
+                    });
+                });
+            },
+            error: function () {
+                // Handle errors here
+            }
+        });
+    });
+
+    // Click, Ajax to confirm delete User
+    $(document).on("click", ".btn-warning", function () {
+        var userId = $(this).data("userid");
+        if (confirm("If you delete this account then all blogs relative is deleted too! Are you sure?")) {
+            $.ajax({
+                url: "/Account/DeleteUser/" + userId,
+                type: "DELETE",
+                success: function (result) {
+                    // Reload the page or update the table data
+                    location.reload();
+                },
+                error: function () {
+                    // Handle errors here
+                }
+            });
+        }
+    });
+    
+</script>

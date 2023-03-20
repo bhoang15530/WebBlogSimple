@@ -1,0 +1,125 @@
+﻿@model IEnumerable<WebBlog.Data.Blog>
+
+@{
+    ViewData["Title"] = "Index";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<h1 style="background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;">
+    Blog 
+</h1>
+
+<!-- Search  -->
+@using (Html.BeginForm("Index", "Blogs", FormMethod.Get, new { @class = "d-flex" }))
+{
+    <div class="form-group mr-2">
+        <input type="text" name="searchString" placeholder="Search by title or author" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+}
+
+<!-- User check -->
+@if (User.Identity.IsAuthenticated)
+{
+    @if (User.IsInRole("User"))
+{
+        <p style="margin-top: 20px">
+            <a class="btn btn-primary" asp-action="Create" asp-route-UserId="@ViewData["UserId"]">Create New</a>
+        </p>
+    }
+    else
+    {
+        <p>
+            Admin cannot create a new post
+        </p>
+    }
+}
+
+@if (ViewData["Usernames"] is Dictionary<int, string> usernames)
+{
+    @foreach (var item in Model)
+    {
+        <div class="card" style="margin-top: 20px">
+            <div class="card-header" style="background: #A2CAE5">
+                <b>Title:</b> @Html.DisplayFor(modelItem => item.Title)
+            </div>
+            <div class="card-body">
+                @if (usernames.TryGetValue(item.BlogId, out string username))
+                {
+                    <h5 class="card-title">Author: @username</h5>
+                }
+                <p class="card-text">@(item.Content.Length > 100 ? item.Content.Substring(0, 100) + "..." : item.Content)</p>
+                @if (item.UserId.ToString() == ViewBag.UserId)
+                {
+                    <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.BlogId">Details</a>
+                    <a class="btn btn-outline-info" asp-action="Edit" asp-route-blogId="@item.BlogId">Edit</a>
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.BlogId">Delete</a>
+                    } else
+                    {
+                        <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.BlogId">Details</a>
+                    }
+            </div>
+        </div>
+    }
+}
+    <!-- Pagination -->
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation example" style="margin-top: 20px;">
+        <ul class="pagination">
+            <li class="page-item">
+                @if (currentPage > 1)
+                {
+                    <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, searchString = ViewBag.SearchString })" aria-label="Previous">
+                        <span aria-hidden="false">&laquo;</span>
+                    </a>
+                } else
+                {
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                }
+            </li>
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                if (i == currentPage)
+                {
+                    <li class="page-item"><a class="page-link" href="#">@i</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { page = i, searchString = ViewBag.SearchString })">@i</a></li>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+            <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, searchString = ViewBag.SearchString })" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+                </li>
+            } else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="false">&raquo;</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+<style>
+
+    body {
+        background-color: #f1f1f1;
+    }
+
+</style>

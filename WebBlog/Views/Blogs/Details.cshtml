@@ -1,0 +1,63 @@
+﻿@model WebBlog.Data.Blog
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Blog</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class="col-sm-10 content-field"
+            style="white-space: pre-wrap; margin-bottom: 20px;">
+            @Html.Raw(Model.Content)
+        </dd>
+        <dt class = "col-sm-2">
+            Author of this Blog
+        </dt>
+        <dd class = "col-sm-10">
+            @ViewData["Username"]
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (Model.UserId.ToString() == ViewBag.UserId)
+    {
+        <a class="btn btn-primary" asp-action="Edit" asp-route-blogId="@ViewData["BlogId"]">Edit</a>
+        <a class="btn btn-primary" asp-action="Index">Back to List</a>
+        } else
+            {
+            <a class="btn btn-primary" asp-action="Index">Back to List</a>
+            }
+</div>
+
+<style>
+    dd {
+        padding: 8px;
+        border: 1px solid black;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+=
+
+    body {
+        background-color: #f1f1f1;
+    }
+
+
+</style>
+
