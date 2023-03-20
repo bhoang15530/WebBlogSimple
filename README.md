@@ -1,4 +1,4 @@
-# WebBlog
+# WebBlog - This is a simple website with no depth in interface design!
 Read before running To run this Project, you need to do the following steps:
 
 1. Create a Database named Blog or whatever you like
@@ -7,8 +7,10 @@ Read before running To run this Project, you need to do the following steps:
 4. I have an item called WebBlogDataExample.sql - this is sample data, you can execute them to create some sample data for the Project
 5. Run Project
 
+
 Tiếng việt:
--- Đọc trước khi chạy 
+-- Đây là một website đơn giản không có chuyên sâu vào thiết kế giao diện ! Đọc trước khi chạy 
+
 Để chạy được Project này thì bạn cần làm các bước sau:
 1. Tạo Database lấy lên là Blog hoặc tùy ý bạn
 2. Tìm ConnectString của Database và dán đè chúng lên ("blog" : "Dán đè vào đây") vào thư mục appsettings.
